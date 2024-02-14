@@ -1,17 +1,35 @@
 kind: pipeline
 type: docker
 name: plantuml
-trigger:
-  branch:
-  - main
-  - master
-  event:
-  - push
+# trigger:
+#   branch:
+#   - main
+#   - master
+#   event:
+#   - push
 
 steps:
   - name: lint & render all .puml files
     image: plantuml/plantuml
     pull: if-not-exists
     commands:
-      - echo "hello world"
-      # - find . -type f -name "*.puml" -exec sh -c 'cat "$1" | java -jar /opt/plantuml.jar -tsvg -pipe > $(dirname "$1")/$(basename "$1" .puml).svg' _ {} \;
+      - find . -type f -name "*.puml" -exec sh -c 'cat "$1" | java -jar /opt/plantuml.jar -tsvg -pipe > $(dirname "$1")/$(basename "$1" .puml).svg' _ {} \;
+  - name: commit svg files
+    image: alpine/git
+    pull: if-not-exists
+    environment:
+      DRONE_REPO:
+        from_secret: github_repo
+      GITHUB_TOKEN:
+        from_secret: github_token
+    when:
+      status:
+        - success
+    commands:
+      - git config --global user.email "drone@example.com"
+      - git config --global user.name "Drone CI"
+      - git config --global --add safe.directory /drone/src
+      - git checkout main
+      - git add -f **/*.svg
+      - git commit -m "[ci skip] generate files"
+      - git push https://$GITHUB_TOKEN@github.com/$DRONE_REPO.git main
