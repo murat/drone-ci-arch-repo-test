@@ -3,9 +3,11 @@
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
 Person(user, "user", "")
-Container(fe, "frontend", "")
-Container(be, "backend", "")
-Container(db, "database", "")
+System_Boundary(system, "System", "") {
+    Container(fe, "frontend", "")
+    Container(be, "backend", "")
+    Container(db, "database", "")
+}
 
 Rel(user, fe, "uses")
 Rel(fe, be, "request", "http")
