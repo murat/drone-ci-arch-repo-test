@@ -13,4 +13,5 @@ steps:
     image: plantuml/plantuml
     pull: if-not-exists
     commands:
-      - find . -type f -name "*.puml" -exec sh -c 'cat "$1" | java -jar /opt/plantuml.jar -tsvg -pipe > $(dirname "$1")/$(basename "$1" .puml).svg' _ {} \;
+      - echo "hello world"
+      # - find . -type f -name "*.puml" -exec sh -c 'cat "$1" | java -jar /opt/plantuml.jar -tsvg -pipe > $(dirname "$1")/$(basename "$1" .puml).svg' _ {} \;
