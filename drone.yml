@@ -14,16 +14,3 @@ steps:
     pull: if-not-exists
     commands:
       - find . -type f -name "*.puml" -exec sh -c 'cat "$1" | java -jar /opt/plantuml.jar -tsvg -pipe > $(dirname "$1")/$(basename "$1" .puml).svg' _ {} \;
-
-  - name: push changes
-    image: alpine
-    when:
-      status:
-      - success
-    environment:
-      GITHUB_TOKEN:
-        from_secret: github_token
-    commands:
-      - git checkout main
-      - git add .
-      - git push origin main
